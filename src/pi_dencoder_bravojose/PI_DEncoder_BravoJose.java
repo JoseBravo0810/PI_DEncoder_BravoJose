@@ -5,6 +5,7 @@
  */
 package pi_dencoder_bravojose;
 
+import controller.DEncoderController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,9 +20,19 @@ public class PI_DEncoder_BravoJose extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/FXMLDEncoder.fxml"));
+        Parent root;
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLDEncoder.fxml"));
+        root = loader.load();
+        
+        // Obtenemos el controlador
+        DEncoderController controller = (DEncoderController) loader.getController();
+        // Establecemos la escena en el controlador
+        controller.setMainStage(stage);
         
         Scene scene = new Scene(root);
+        
+        // Enlazamos la hoja de estilos en cascada (CSS - Cascading Style Sheet)
+        scene.getStylesheets().add("/css/error.css");
         
         stage.setScene(scene);
         stage.setTitle("DEncoder");

@@ -12,7 +12,6 @@
 <?import javafx.scene.text.Font?>
 <?import textfieldfilechooser.TextFieldFileChooser?>
 
-
 <AnchorPane id="AnchorPane" prefHeight="522.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.DEncoderController">
    <children>
       <MenuBar layoutX="64.0" layoutY="14.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -56,9 +55,14 @@
          </toggleGroup>
       </RadioButton>
       <RadioButton fx:id="rbDencode" layoutX="397.0" layoutY="180.0" mnemonicParsing="false" text="Decode" toggleGroup="$order" />
-      <TextField layoutX="142.0" layoutY="232.0" prefHeight="31.0" prefWidth="464.0" />
+      <TextField fx:id="password" layoutX="142.0" layoutY="232.0" prefHeight="31.0" prefWidth="464.0" promptText="Password" />
       <TextFieldFileChooser fx:id="outputFile" layoutX="38.0" layoutY="326.0" />
-      <Button fx:id="btnClear" layoutX="149.0" layoutY="421.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="121.0" text="Clear" />
+      <Button fx:id="btnClear" layoutX="149.0" layoutY="421.0" mnemonicParsing="false" onAction="#clearFields" prefHeight="37.0" prefWidth="121.0" text="Clear" />
       <Button fx:id="btnDEncode" layoutX="389.0" layoutY="421.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="121.0" text="Encode" />
+      <Label alignment="TOP_LEFT" layoutX="38.0" layoutY="263.0" prefHeight="27.0" prefWidth="135.0" text="(Max characters: 8)">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>
