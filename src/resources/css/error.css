@@ -12,4 +12,5 @@ and open the template in the editor.
     -fx-border-style: solid;
     -fx-border-color: red;
     -fx-border-width: 2px;
+    -fx-prompt-text-fill: red;
 }
