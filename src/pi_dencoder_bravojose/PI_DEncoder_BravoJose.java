@@ -21,7 +21,7 @@ public class PI_DEncoder_BravoJose extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         Parent root;
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/fxml/FXMLDEncoder.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Resources/fxml/FXMLDEncoder.fxml"));
         root = loader.load();
         
         // Obtenemos el controlador
@@ -32,7 +32,7 @@ public class PI_DEncoder_BravoJose extends Application {
         Scene scene = new Scene(root);
         
         // Enlazamos la hoja de estilos en cascada (CSS - Cascading Style Sheet)
-        scene.getStylesheets().add("/resources/css/error.css");
+        scene.getStylesheets().add("/Resources/css/error.css");
         
         stage.setScene(scene);
         stage.setTitle("DEncoder");

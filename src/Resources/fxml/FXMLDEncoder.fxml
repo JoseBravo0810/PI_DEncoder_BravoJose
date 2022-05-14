@@ -18,12 +18,12 @@
         <menus>
           <Menu mnemonicParsing="false" text="Help">
             <items>
-                  <MenuItem fx:id="help" mnemonicParsing="false" text="Help" />
+                  <MenuItem fx:id="help" mnemonicParsing="false" onAction="#help" text="Help" />
             </items>
           </Menu>
             <Menu fx:id="Contact" mnemonicParsing="false" text="Contact">
               <items>
-                <MenuItem fx:id="joseBravo" mnemonicParsing="false" text="Jose Bravo" />
+                <MenuItem fx:id="joseBravo" mnemonicParsing="false" onAction="#joseBravo" text="Jose Bravo" />
               </items>
             </Menu>
         </menus>

@@ -5,6 +5,7 @@
  */
 package controller;
 
+import pi_dencoder_bravojose.Browser;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -36,7 +37,14 @@ import javafx.stage.Stage;
 
 /* Paquetes propios */
 import textfieldfilechooser.TextFieldFileChooser;
-import resources.passwordfieldskin.VisiblePasswordFieldSkin;
+import Resources.passwordfieldskin.VisiblePasswordFieldSkin;
+import com.sun.glass.ui.SystemClipboard;
+import java.awt.Toolkit;
+import javafx.scene.Scene;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 
 /**
  * FXML Controller class
@@ -85,30 +93,30 @@ public class DEncoderController implements Initializable {
         
         // Establecemos tooltips
         inputFile.setTextFieldTooltip("Write here the path to your file"); // Tooltip para el campo de texto del fichero de entrada
-        inputFile.setButtonTooltip("Click here to find your file"); // Tooltip para el boton del componente personalizado
+        inputFile.setButtonTooltip("Click here to find your file"); // Tooltip para el boton del fichero de entrada
         rbEncode.setTooltip(new Tooltip("Select this option to encode your file.")); // Tooltip para la opcion encode en order
         rbDencode.setTooltip(new Tooltip("Select this option to decode your file.")); // Tooltip para la opcion decode en order
         password.setTooltip(new Tooltip("Type your password here, remember that it must have exactly 8 characters.")); // Tooltip del campo de texto para la contraseña
-        outputFile.setTextFieldTooltip("Write here the output path"); // Tooltip del campo de texto del fichero de salida
-        outputFile.setButtonTooltip("Click here to select the output directory"); // Tooltip del boton del componente personalizado
+        outputFile.setTextFieldTooltip("Write here the output directory"); // Tooltip del campo de texto del fichero de salida
+        outputFile.setButtonTooltip("Click here to select the output directory"); // Tooltip del boton del fichero de salida
         
         
-        outputFile.setClassStyle("tfError"); // Establecemos el estilo de error de inicio al componente personalizado, para atraer la atencion del usuario cuando lo hagamos visible
+        outputFile.setClassStyle("tfError"); // Establecemos el estilo de error de inicio al fichero de salida, para atraer la atencion del usuario cuando lo hagamos visible
         outputFile.setVisible(false); // Hacemos no visible el componente
         outputLabel.setVisible(false); // Hacemos no visible la etiqueta
 
         // Establecemos el promptText de los componentes customizados
-        inputFile.setPrText("Enter input file");
-        outputFile.setPrText("Don't leave this field empty");
+        inputFile.setPrText("Enter input file"); // Fichero de entrada
+        outputFile.setPrText("Don't leave this field empty"); // Fichero de salida
 
-        // Establecemos el enmascaramiento que seguirá el campo de texto (para añadir funcionalidad de hacer visible la contraseña)
+        // Establecemos el enmascaramiento que seguirá el campo de texto (para añadir funcionalidad de hacer visible/no visible la contraseña)
         password.setSkin(new VisiblePasswordFieldSkin(password));
         // Listener para hacer que el campo de texto de la contraseña tenga el estilo de error si no tiene 8 caracteres exactamente
         password.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 
-                // Quitamos el estilo de error
+                // Quitamos el estilo de error para evitar duplicados
                 password.getStyleClass().remove("tfError");
 
                 // Si el valor nuevo (la cadena actual de la contraseña) tiene una longitud distinta de 8 caracteres, si esta vacia se gestiona al quitarle el foco
@@ -118,7 +126,7 @@ public class DEncoderController implements Initializable {
                 }
             }
         });
-        // Establecemos listener para la perdida del foco en el campo de la contraseña
+        // Establecemos listener para gestionar la perdida del foco en el campo de la contraseña
         password.focusedProperty().addListener(new listenerChangeFocusOnPasswordField());
 
         // Establecemos listener para cambiar el nombre del boton al seleccionar codificar o decodificar como orden
@@ -146,6 +154,7 @@ public class DEncoderController implements Initializable {
         // Componente para seleccionar el fichero de entrada
         inputFile.setPath(""); // Vaciamos el fichero de entrada
         inputFile.removeClassStyle("tfError"); // Quitamos estilo de error si lo tiene
+        inputFile.setPrText("Enter input file");
         
         // Componente para seleccionar el fichero de salida
         outputFile.setPath(""); // Vaciamos el campo de texto
@@ -173,15 +182,15 @@ public class DEncoderController implements Initializable {
         // Variable que almacenará el estado de salida del programa DEncode
         int estado;
         
+        // Declaramos alert
+        Alert alert = new Alert(AlertType.INFORMATION);
         
         
         // Si los datos son validos
         if(validateFields()) {
-            System.out.println("Todo bien, todo correcto");
-            
             try {
                 if(rbEncode.isSelected()) {
-                    // Construimos un nuevo proceso
+                    // Construimos un nuevo proceso y lo lanzamos
                     Process p = new ProcessBuilder("DEncoder/DEncoder", inputFile.getPath(), outputFile.getPath(), "c", password.getText()).start();
                     // Esperamos el estado que nos devuelve
                     estado = p.waitFor();
@@ -192,16 +201,137 @@ public class DEncoderController implements Initializable {
                     estado = p.waitFor();
                 }
                 
+                System.out.println(estado + "");
                 switch(estado) {
                     case 0: 
-                        System.out.println("Todo ha salido a pedir de boca");
+                        alert = new Alert(AlertType.INFORMATION); // Establecemos alert de tipo informativo
+                        if(rbEncode.isSelected()) { // Si la orden es codificar
+                            alert.setHeaderText("File encode success");
+                        } else { // Si la orden es decodificar
+                            alert.setHeaderText("Fila decode success");
+                        }
+                        
+                        alert.setContentText("File saved in: " + new File(outputFile.getPath()).getAbsolutePath() + "\n\nYou got the path to your file in your clipboard");
+                        // Establecemos el alto minimo del alert para que se ajuste al contenido
+                        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                        // Establecemos el ancho minimo del alert para que se ajuste al contenido
+                        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+                        // Mostramos alerta y esperamos que el usuario haaga click en el boton OK
+                        alert.showAndWait();
+                        
+                        // Instancia del portapapeles
+                        Clipboard clpbrd = Clipboard.getSystemClipboard();
+                        // Instancia del contenido
+                        ClipboardContent content = new ClipboardContent();
+                        // Establecemos la cadena que será la ruta
+                        content.putString(new File(outputFile.getPath()).getAbsolutePath());
+                        // Establecemos este contenido, como el contenido del portapapeles
+                        clpbrd.setContent(content);
+                        
                         break;
-                    default: System.out.println("Otro");
+                    // Teoricamente, como las comprobaciones las realizamos antes de ejecutar la orden, nunca deberia salir algo distinto a 0
+                    // pero contemplamos las distintas salidas de error del programa en C
+                    case -1: // Error en el numero de argumentos
+                        alert = new Alert(AlertType.ERROR); // Alert de tipo error
+                        alert.setHeaderText("INTERNAL ERROR -1"); // Añadimos cabecera
+                        alert.setContentText("Error, no arguments specified\nClose the app, and open it again"); // Establecemos contenido
+                        // Establecemos el alto minimo del alert para que se ajuste al contenido
+                        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                        // Establecemos el ancho minimo del alert para que se ajuste al contenido
+                        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+                        // Mostramos alerta y esperamos que el usuario haaga click en el boton OK
+                        alert.showAndWait();
+                    case -2: // Error en el fichero de entrada
+                        alert = new Alert(AlertType.ERROR); // Alert de tipo error
+                        alert.setHeaderText("INTERNAL ERROR -2"); // Añadimos cabecera
+                        alert.setContentText("Error, no input file\nClose the app, and open it again"); // Establecemos contenido
+                        // Establecemos el alto minimo del alert para que se ajuste al contenido
+                        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                        // Establecemos el ancho minimo del alert para que se ajuste al contenido
+                        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+                        // Mostramos alerta y esperamos que el usuario haaga click en el boton OK
+                        alert.showAndWait();
+                    case -3: // Error en el fichero de salida
+                        alert = new Alert(AlertType.ERROR); // Alert de tipo error
+                        alert.setHeaderText("INTERNAL ERROR -3"); // Añadimos cabecera
+                        alert.setContentText("Error, no output file\nClose the app, and open it again"); // Establecemos contenido
+                        // Establecemos el alto minimo del alert para que se ajuste al contenido
+                        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                        // Establecemos el ancho minimo del alert para que se ajuste al contenido
+                        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+                        // Mostramos alerta y esperamos que el usuario haaga click en el boton OK
+                        alert.showAndWait();
+                    case -4: // Error, orden no especificada
+                        alert = new Alert(AlertType.ERROR); // Alert de tipo error
+                        alert.setHeaderText("INTERNAL ERROR -4"); // Añadimos cabecera
+                        alert.setContentText("Error, no selected order\nClose the app, and open it again"); // Establecemos contenido
+                        // Establecemos el alto minimo del alert para que se ajuste al contenido
+                        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                        // Establecemos el ancho minimo del alert para que se ajuste al contenido
+                        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+                        // Mostramos alerta y esperamos que el usuario haaga click en el boton OK
+                        alert.showAndWait();
+                    case 253: // Error directorio de saida inexistente
+                        alert = new Alert(AlertType.ERROR); // Alert de tipo error
+                        alert.setHeaderText("INTERNAL ERROR 253"); // Añadimos cabecera
+                        alert.setContentText("Error, output directory does not exist."); // Establecemos contenido
+                        // Establecemos el alto minimo del alert para que se ajuste al contenido
+                        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                        // Establecemos el ancho minimo del alert para que se ajuste al contenido
+                        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+                        // Mostramos alerta y esperamos que el usuario haaga click en el boton OK
+                        alert.showAndWait();
+                        outputFile.setClassStyle("tfError");
+                    default: 
+                        // Error, orden no especificada
+                        alert = new Alert(AlertType.ERROR); // Alert de tipo error
+                        alert.setHeaderText("INTERNAL CRITICAL ERROR"); // Añadimos cabecera
+                        alert.setContentText("Unknown Error\nClose the app, and open it again"); // Establecemos contenido
+                        // Establecemos el alto minimo del alert para que se ajuste al contenido
+                        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                        // Establecemos el ancho minimo del alert para que se ajuste al contenido
+                        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+                        // Mostramos alerta y esperamos que el usuario haaga click en el boton OK
+                        alert.showAndWait();
+                        System.out.println("Other");
                 }
             } catch (IOException ioex) {Logger.getLogger(DEncoderController.class.getName()).log(Level.SEVERE, null, ioex);
             } catch (InterruptedException ex) {Logger.getLogger(DEncoderController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+    
+    // Metodo que se ejecuta al hacer click en el boton contacto del menu "Jose Bravo"
+    @FXML
+    public void joseBravo(ActionEvent event) {
+        // Declaramos alert de tipo error, con la cadena formada dependiendo de los errores cometidos
+        Alert alert = new Alert(AlertType.INFORMATION);
+        // Establecemos header del alert
+        alert.setHeaderText("Contact information");
+        alert.setContentText("Jose Bravo Castillo - jobravcas@gmail.com");
+        // Establecemos el alto minimo del alert para que se ajuste al contenido
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        // Establecemos el ancho minimo del alert para que se ajuste al contenido
+        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+        // Mostramos alerta y esperamos que el usuario haaga click en el boton OK
+        alert.showAndWait();
+    }
+    
+    // Metodo que se ejecuta al hacer click en el boton help del menu "Help"
+    @FXML
+    public void help(ActionEvent event) {
+        Scene browserScene;
+        Stage browserStage = new Stage();
+    
+        // Hacemos la ventana de tipo modal respecto a la aplicación
+        browserStage.initModality(Modality.APPLICATION_MODAL);
+        
+        // Añadimos la escena al stage y la hacemos visible
+        browserStage.setTitle("Web View");
+        browserScene = new Scene(new Browser(browserStage), 750, 500, Color.web("#666970"));
+        browserStage.setScene(browserScene);
+        //scene.getStylesheets().add(AppAyuda.class.getResource("BrowserToolbar.css").toExternalForm());
+        browserStage.show();  
     }
     
     // Metodo para validar los campos
@@ -215,7 +345,7 @@ public class DEncoderController implements Initializable {
         // Comprobamos que haya contenido en el fichero de entrada
         if(!inputFile.getPath().isEmpty()) { // Si hay contenido (no está vacío)
             // Cargamos el fichero
-            File inFile = new File(inputFile.getPath());
+            File inFile = new File(new File(inputFile.getPath()).getAbsolutePath());
 
             if(inFile.exists()) { // Si el fichero existe
                 if(inFile.isFile()) { // Y es un fichero, no un directorio
@@ -250,12 +380,12 @@ public class DEncoderController implements Initializable {
         // Comprobamos que el fichero de salida no esté vacío
         if(!outputFile.getPath().isEmpty()) {
             // Comprobamos que el fichero de salida no exista
-            File outFile = new File(outputFile.getPath());
+            File outFile = new File(new File(outputFile.getPath()).getAbsolutePath());
             // Si el fichero no existe
             if(!outFile.exists()) {
                 output = true; // Validamos fichero de salida
             } else { // Si existe
-                cadena += "- Specified output file already exist, delete file, or specify other output directory.\n\n"; // Mensaje de error para el alert
+                cadena += "- Specified output file already exist, delete file, specify other output directory, or other name.\n\n"; // Mensaje de error para el alert
                 outputFile.setPrText("Specify a non-existing file"); // Establecemos prompt text especificando el error
             }
         } else { // Si el campo esta vacio
@@ -265,6 +395,9 @@ public class DEncoderController implements Initializable {
         
         // Si todos los campos estan validados
         if(input && pswd && output) {
+            inputFile.removeClassStyle("tfError"); // Establecemos estilo de error
+            password.getStyleClass().remove("tfError"); // Establecemos estilo de error
+            outputFile.removeClassStyle("tfError"); // Establecemos estilo de error
             return true; // Devolvemos true
         } else {
             // Declaramos alert de tipo error, con la cadena formada dependiendo de los errores cometidos
@@ -291,7 +424,7 @@ public class DEncoderController implements Initializable {
             
             // Si no es valido el campo del fichero de salida
             if(!output) {
-                outputFile.setClassStyle("tfError");
+                outputFile.setClassStyle("tfError"); // Establecemos estilo de error
             }
             
             // Devolvemos false
@@ -398,7 +531,7 @@ public class DEncoderController implements Initializable {
 
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-            // Evitamos que se duplique la clase en la lista de clases
+            // Evitamos que se duplique la clase en la lista de clases del componente por si se añade mas de una vez (reiteracion de obtener y perder el foco con el campo vacio)
             inputFile.removeClassStyle("tfError");
             
             // Si pierde el foco
@@ -417,8 +550,8 @@ public class DEncoderController implements Initializable {
                     
                 } else { // Si tiene algo escrito
                     inputFile.removeClassStyle("tfError"); // Eliminamos la clase de error (si no la tiene no hace nada)
-                    inputFile.setPrText("Enter an input file"); // CAmbiamos el prompt text (no se verá)
-                    outputFile.setVisible(true); // Hacemos visible componente del output
+                    inputFile.setPrText("Enter input file"); // CAmbiamos el prompt text (no se verá)
+                    outputFile.setVisible(true); // Hacemos visible componente del fichero de salida
                     outputLabel.setVisible(true); // Hacemos visible la etiqueta del directorio de salida
                 }
             } else { // Si gana el foco

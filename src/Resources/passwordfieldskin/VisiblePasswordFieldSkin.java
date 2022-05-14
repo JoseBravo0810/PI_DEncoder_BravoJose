@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package resources.passwordfieldskin;
+package Resources.passwordfieldskin;
 
 import com.sun.javafx.scene.control.skin.TextFieldSkin;
 import static com.sun.javafx.scene.control.skin.TextFieldSkin.BULLET;
