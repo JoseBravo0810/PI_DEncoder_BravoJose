@@ -271,10 +271,10 @@ public class DEncoderController implements Initializable {
                         alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
                         // Mostramos alerta y esperamos que el usuario haaga click en el boton OK
                         alert.showAndWait();
-                    case 253: // Error directorio de saida inexistente
+                    default: // Error directorio de saida inexistente
                         alert = new Alert(AlertType.ERROR); // Alert de tipo error
-                        alert.setHeaderText("INTERNAL ERROR 253"); // Añadimos cabecera
-                        alert.setContentText("Error, output directory does not exist."); // Establecemos contenido
+                        alert.setHeaderText("INTERNAL ERROR"); // Añadimos cabecera
+                        alert.setContentText("Error, output directory does not exist.\nYou have to specify an existing output directory."); // Establecemos contenido
                         // Establecemos el alto minimo del alert para que se ajuste al contenido
                         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                         // Establecemos el ancho minimo del alert para que se ajuste al contenido
@@ -282,17 +282,6 @@ public class DEncoderController implements Initializable {
                         // Mostramos alerta y esperamos que el usuario haaga click en el boton OK
                         alert.showAndWait();
                         outputFile.setClassStyle("tfError");
-                    default: 
-                        // Error, orden no especificada
-                        alert = new Alert(AlertType.ERROR); // Alert de tipo error
-                        alert.setHeaderText("INTERNAL CRITICAL ERROR"); // Añadimos cabecera
-                        alert.setContentText("Unknown Error\nClose the app, and open it again"); // Establecemos contenido
-                        // Establecemos el alto minimo del alert para que se ajuste al contenido
-                        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                        // Establecemos el ancho minimo del alert para que se ajuste al contenido
-                        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
-                        // Mostramos alerta y esperamos que el usuario haaga click en el boton OK
-                        alert.showAndWait();
                         System.out.println("Other");
                 }
             } catch (IOException ioex) {Logger.getLogger(DEncoderController.class.getName()).log(Level.SEVERE, null, ioex);
@@ -611,6 +600,10 @@ public class DEncoderController implements Initializable {
                 } else { // Si el campo tiene una contraseña escrita
                     // Y la contraseña no tiene la longitud requerida (El campo tiene ya el estilo de error al no tener 8 caracteres [listener implementado en el metodo initialize])
                     if(password.getText().length() != 8) {
+                        // Quitamos el estilo de error (aseguramos que no se duplique en la lista de estilos del componente)
+                        password.getStyleClass().remove("tfError");
+                        // Añadmos estilo de error
+                        password.getStyleClass().add("tfError");
                         // Declaramos alert
                         Alert alert = new Alert(AlertType.WARNING, "Password must have exactly 8 characters!!");
                         // Mostramos alerta y esperamos que el usuario haaga click en el boton OK
