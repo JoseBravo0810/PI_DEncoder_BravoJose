@@ -179,6 +179,8 @@ public class DEncoderController implements Initializable {
     @FXML
     public void dencode(ActionEvent event) {
         
+        String osName = System.getProperty("os.name"); // Extraemos el nombre del sistema operativo
+        
         // Variable que almacenará el estado de salida del programa DEncode
         int estado;
         
@@ -190,15 +192,29 @@ public class DEncoderController implements Initializable {
         if(validateFields()) {
             try {
                 if(rbEncode.isSelected()) {
-                    // Construimos un nuevo proceso y lo lanzamos
-                    Process p = new ProcessBuilder("DEncoder/DEncoder", inputFile.getPath(), outputFile.getPath(), "c", password.getText()).start();
-                    // Esperamos el estado que nos devuelve
-                    estado = p.waitFor();
+                    if(osName.contains("Windows")) { // SO Windows -> Usa backslash
+                        // Construimos un nuevo proceso y lo lanzamos
+                        Process p = new ProcessBuilder("DEncoder/DEncoder.exe", inputFile.getPath(), outputFile.getPath(), "c", password.getText()).start();
+                        // Esperamos el estado que nos devuelve
+                        estado = p.waitFor();
+                    } else { // SOs UNIX -> Usa slash
+                        // Construimos un nuevo proceso y lo lanzamos
+                        Process p = new ProcessBuilder("DEncoder/DEncoder", inputFile.getPath(), outputFile.getPath(), "c", password.getText()).start();
+                        // Esperamos el estado que nos devuelve
+                        estado = p.waitFor();
+                    }
                 } else {
-                    // Construimos un nuevo proceso
-                    Process p = new ProcessBuilder("DEncoder/DEncoder", inputFile.getPath(), outputFile.getPath(), "d", password.getText()).start();
-                    // Esperamos el estado que nos devuelve
-                    estado = p.waitFor();
+                    if(osName.contains("Windows")) { // SO Windows -> Usa backslash
+                        // Construimos un nuevo proceso y lo lanzamos
+                        Process p = new ProcessBuilder("DEncoder/DEncoder.exe", inputFile.getPath(), outputFile.getPath(), "d", password.getText()).start();
+                        // Esperamos el estado que nos devuelve
+                        estado = p.waitFor();
+                    } else { // SOs UNIX -> Usa slash
+                        // Construimos un nuevo proceso y lo lanzamos
+                        Process p = new ProcessBuilder("DEncoder/DEncoder", inputFile.getPath(), outputFile.getPath(), "d", password.getText()).start();
+                        // Esperamos el estado que nos devuelve
+                        estado = p.waitFor();
+                    }
                 }
                 
                 System.out.println(estado + "");
