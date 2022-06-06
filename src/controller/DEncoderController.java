@@ -332,7 +332,7 @@ public class DEncoderController implements Initializable {
         browserStage.initModality(Modality.APPLICATION_MODAL);
         
         // Añadimos la escena al stage y la hacemos visible
-        browserStage.setTitle("Web View");
+        browserStage.setTitle("DEncoder user´s manual");
         browserScene = new Scene(new Browser(browserStage), 750, 500, Color.web("#666970"));
         browserStage.setScene(browserScene);
         //scene.getStylesheets().add(AppAyuda.class.getResource("BrowserToolbar.css").toExternalForm());
@@ -507,7 +507,7 @@ public class DEncoderController implements Initializable {
                 if(selectedFile.isDirectory())
                 {
                     // Establecemos el path del directorio recogido + separador de nodos en un path* + nombre del fichero seleccionado en el inputfile + extensión .cif
-                    outputFile.setPath(selectedFile.getPath() + System.getProperty("file.separator") + getFileName(inputFile.getPath()) + ".cif");
+                    outputFile.setPath(selectedFile.getPath() + System.getProperty("file.separator") + getFileName(inputFile.getPath()) + ".DEncode");
                     // * Con la instruccion System.getProperty("file.separator") obtenemos el separador que usa el sistema operativo
                     //   devolverá "/" en sistemas UNIX, y "\" en sistemas Windows
                 }

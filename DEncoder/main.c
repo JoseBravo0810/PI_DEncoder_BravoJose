@@ -1,5 +1,4 @@
 	/*
-		Recuperacion trimestre 2
 		Jose Bravo Castillo
 		invocación programa: ./des_cifrador fichero_plano fichero_destino c/d password
 	*/

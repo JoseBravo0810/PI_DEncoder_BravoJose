@@ -1,5 +1,4 @@
 	/*
-		Recuperacion trimestre 2
 		Jose Bravo Castillo
 	*/
 
