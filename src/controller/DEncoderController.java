@@ -257,6 +257,8 @@ public class DEncoderController implements Initializable {
                         alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
                         // Mostramos alerta y esperamos que el usuario haaga click en el boton OK
                         alert.showAndWait();
+                        
+                        break;
                     case -2: // Error en el fichero de entrada
                         alert = new Alert(AlertType.ERROR); // Alert de tipo error
                         alert.setHeaderText("INTERNAL ERROR -2"); // Añadimos cabecera
@@ -267,6 +269,8 @@ public class DEncoderController implements Initializable {
                         alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
                         // Mostramos alerta y esperamos que el usuario haaga click en el boton OK
                         alert.showAndWait();
+                        
+                        break;
                     case -3: // Error en el fichero de salida
                         alert = new Alert(AlertType.ERROR); // Alert de tipo error
                         alert.setHeaderText("INTERNAL ERROR -3"); // Añadimos cabecera
@@ -277,6 +281,8 @@ public class DEncoderController implements Initializable {
                         alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
                         // Mostramos alerta y esperamos que el usuario haaga click en el boton OK
                         alert.showAndWait();
+                        
+                        break;
                     case -4: // Error, orden no especificada
                         alert = new Alert(AlertType.ERROR); // Alert de tipo error
                         alert.setHeaderText("INTERNAL ERROR -4"); // Añadimos cabecera
@@ -287,6 +293,8 @@ public class DEncoderController implements Initializable {
                         alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
                         // Mostramos alerta y esperamos que el usuario haaga click en el boton OK
                         alert.showAndWait();
+                        
+                        break;
                     default: // Error directorio de saida inexistente
                         alert = new Alert(AlertType.ERROR); // Alert de tipo error
                         alert.setHeaderText("INTERNAL ERROR"); // Añadimos cabecera
