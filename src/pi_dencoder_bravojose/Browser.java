@@ -44,14 +44,21 @@ public class Browser extends Region{
     //Los labels de los links que estarán visibles en todo momento para que el usuario pueda moverse cómodamente por los ficheros de ayuda
     private static String[] captions = new String[]
     {
-        "Index   ",
-       
+        "\tIndex\t",
+        "\tInput File\t",
+        "\tOrder\t",
+        "\tPassword\t",
+        "\tOutput File"
     };
     
     //Los links de los labels anteriores
     private String[] urls = new String[]
     {
         PI_DEncoder_BravoJose.class.getResource("/Resources/html/index.html").toExternalForm(),
+        PI_DEncoder_BravoJose.class.getResource("/Resources/html/InputFile.html").toExternalForm(),
+        PI_DEncoder_BravoJose.class.getResource("/Resources/html/Order.html").toExternalForm(),
+        PI_DEncoder_BravoJose.class.getResource("/Resources/html/Password.html").toExternalForm(),
+        PI_DEncoder_BravoJose.class.getResource("/Resources/html/OutputFile.html").toExternalForm(),
     };
     
 
