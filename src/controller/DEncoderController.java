@@ -190,28 +190,29 @@ public class DEncoderController implements Initializable {
         
         // Si los datos son validos
         if(validateFields()) {
+            
             try {
                 if(rbEncode.isSelected()) {
                     if(osName.contains("Windows")) { // SO Windows -> Usa backslash
                         // Construimos un nuevo proceso y lo lanzamos
-                        Process p = new ProcessBuilder("DEncoder/DEncoder.exe", inputFile.getPath(), outputFile.getPath(), "c", password.getText()).start();
+                        Process p = new ProcessBuilder("/usr/bin/CodeAlgorithmJBC", inputFile.getPath(), outputFile.getPath(), "c", password.getText()).start();
                         // Esperamos el estado que nos devuelve
                         estado = p.waitFor();
                     } else { // SOs UNIX -> Usa slash
                         // Construimos un nuevo proceso y lo lanzamos
-                        Process p = new ProcessBuilder("DEncoder/DEncoder", inputFile.getPath(), outputFile.getPath(), "c", password.getText()).start();
+                        Process p = new ProcessBuilder("/usr/bin/CodeAlgorithmJBC", inputFile.getPath(), outputFile.getPath(), "c", password.getText()).start();
                         // Esperamos el estado que nos devuelve
                         estado = p.waitFor();
                     }
                 } else {
                     if(osName.contains("Windows")) { // SO Windows -> Usa backslash
                         // Construimos un nuevo proceso y lo lanzamos
-                        Process p = new ProcessBuilder("DEncoder/DEncoder.exe", inputFile.getPath(), outputFile.getPath(), "d", password.getText()).start();
+                        Process p = new ProcessBuilder("/usr/bin/CodeAlgorithmJBC", inputFile.getPath(), outputFile.getPath(), "d", password.getText()).start();
                         // Esperamos el estado que nos devuelve
                         estado = p.waitFor();
                     } else { // SOs UNIX -> Usa slash
                         // Construimos un nuevo proceso y lo lanzamos
-                        Process p = new ProcessBuilder("DEncoder/DEncoder", inputFile.getPath(), outputFile.getPath(), "d", password.getText()).start();
+                        Process p = new ProcessBuilder("/usr/bin/CodeAlgorithmJBC", inputFile.getPath(), outputFile.getPath(), "d", password.getText()).start();
                         // Esperamos el estado que nos devuelve
                         estado = p.waitFor();
                     }

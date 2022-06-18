@@ -1,4 +1,5 @@
 	/*
+		Recuperacion trimestre 2
 		Jose Bravo Castillo
 		invocación programa: ./des_cifrador fichero_plano fichero_destino c/d password
 	*/
@@ -30,7 +31,7 @@ int main(int argc, char **argv)
 	char *block;
 	char *ext_block;
 	//Variables del tamaño de los bloques (en base a contraseña)
-	int block_size = strlen(argv[4]);
+	int block_size = 8;
 	int ext_block_size = block_size * 2;
 	//Variables para saber el numero de bloques del fichero
 	struct stat file_size;
@@ -70,12 +71,15 @@ int main(int argc, char **argv)
 	/* Si orden es cifrar(c), o descifrar(d) */
 	if(strcmp(argv[3], "c") == 0)
 	{
+		printf("Cifrar");
+	
 		//Determinamos el maximo del fichero
 		stat(argv[1], &file_size);
 
 		//Recogemos el tamaño del fichero en bloques (blocks)
 		block_num = file_size.st_size / block_size;
 		rest_bytes = file_size.st_size % block_size;
+		
 
 		/* Bucle de cifrado */
 		for(i = 0; i < block_num; i++)
@@ -101,18 +105,14 @@ int main(int argc, char **argv)
 			//Leemos el resto del bloque
 			fread(block, rest_bytes, 1, fd_flat);
 
-			//Codificamos el bloque
-			d_encode(&block, password, rest_bytes);
-
-			//Añadimos ruido
-			noise(block, &ext_block, rest_bytes);
-
 			//Escribimos el bloque extendido en el fichero destino
-			fwrite(ext_block, rest_bytes * 2, 1, fd_d_encode);
+			fwrite(block, rest_bytes, 1, fd_d_encode);
 		}
 	}
 	else
 	{
+		printf("Desifrar");
+	
 		//Determinamos el maximo del fichero
 		stat(argv[1], &file_size);
 
@@ -143,16 +143,10 @@ int main(int argc, char **argv)
 		if(rest_bytes > 0)
 		{
 			//Leemos el resto del bloque
-			fread(ext_block, rest_bytes, 1, fd_flat);
-
-			//Quitamos el ruido
-			denoise(&block, ext_block, rest_bytes);
-
-			//Decodificamos el bloque
-			d_encode(&block, password, rest_bytes);
+			fread(block, rest_bytes, 1, fd_flat);
 
 			//Escribimos el bloque en el fichero destino
-			fwrite(block, rest_bytes / 2, 1, fd_d_encode);
+			fwrite(block, rest_bytes, 1, fd_d_encode);
 		}
 	}
 
